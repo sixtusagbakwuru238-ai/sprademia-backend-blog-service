@@ -39,7 +39,7 @@ declare module "fastify" {
 export interface PaginationQuery {
   page: number;
   limit: number;
-  cursor?: string;  // cursor-based pagination for feeds
+  cursor?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -77,7 +77,7 @@ export interface ApiError {
 export type ApiResponse<T = unknown> = ApiSuccess<T> | ApiError;
 
 // ─────────────────────────────────────────────────────────────────────
-// RabbitMQ event envelopes (emitted by this service)
+// RabbitMQ event envelopes
 // ─────────────────────────────────────────────────────────────────────
 
 export type BlogEventType =
@@ -93,11 +93,10 @@ export type BlogEventType =
 export interface BlogEvent<T = unknown> {
   eventType: BlogEventType;
   serviceSource: "blog-service";
-  timestamp: string;       // ISO 8601
+  timestamp: string;
   payload: T;
 }
 
-// Specific event payloads
 export interface PostPublishedPayload {
   postId: string;
   slug: string;
@@ -117,9 +116,9 @@ export interface PostViewedPayload {
 export interface NewsletterSubscribedPayload {
   subscriberId: string;
   email: string;
-  firstName?: string;    // for personalising the welcome email
+  firstName?: string;
   categories: string[];
-  token: string;         // unsubscribe / verify token
+  token: string;
 }
 
 
