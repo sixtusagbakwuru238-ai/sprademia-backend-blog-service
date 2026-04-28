@@ -122,6 +122,7 @@ export interface NewsletterSubscribedPayload {
 }
 
 
+
 // // src/types/index.ts
 
 // import type { FastifyRequest } from "fastify";
