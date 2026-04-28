@@ -16,7 +16,9 @@ export interface JWTPayload {
 export type UserRole = "student" | "creator" | "editor" | "admin";
 
 // ─────────────────────────────────────────────────────────────────────
-// Augmented Fastify request with decoded user
+// Authenticated user shape (decoded from JWT by auth middleware)
+// Note: request.user is typed as unknown by @fastify/jwt — we cast
+// to AuthenticatedUser wherever we need it (see middleware/auth.ts).
 // ─────────────────────────────────────────────────────────────────────
 
 export interface AuthenticatedUser {
@@ -24,12 +26,6 @@ export interface AuthenticatedUser {
   email: string;
   role: UserRole;
   schoolId?: string;
-}
-
-declare module "fastify" {
-  interface FastifyRequest {
-    user?: AuthenticatedUser;
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────
