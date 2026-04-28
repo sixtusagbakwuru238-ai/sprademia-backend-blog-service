@@ -1,16 +1,19 @@
 // src/middleware/auth.ts
 // JWT authentication middleware and role-based access control.
+// We do NOT augment FastifyRequest.user — @fastify/jwt already owns that
+// property. Instead we store the decoded user on request.authenticatedUser
+// via a Fastify decorator, avoiding the TS2687 modifier conflict entirely.
 
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { UserRole, AuthenticatedUser, JWTPayload } from "../types";
 
 // ─────────────────────────────────────────────────────────────────────
-// Augment FastifyRequest here (single place) to avoid TS2687
+// Extend FastifyRequest with our own property (not 'user')
 // ─────────────────────────────────────────────────────────────────────
 
 declare module "fastify" {
   interface FastifyRequest {
-    user?: AuthenticatedUser;
+    authenticatedUser?: AuthenticatedUser;
   }
 }
 
@@ -24,7 +27,7 @@ export async function authenticate(
 ): Promise<void> {
   try {
     const payload = await request.jwtVerify<JWTPayload>();
-    request.user = {
+    request.authenticatedUser = {
       id:       payload.sub,
       email:    payload.email,
       role:     payload.role,
@@ -39,7 +42,7 @@ export async function authenticate(
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Optional auth — sets request.user if token present, silent if not
+// Optional auth — sets authenticatedUser if token present, silent if not
 // ─────────────────────────────────────────────────────────────────────
 
 export async function optionalAuthenticate(
@@ -50,14 +53,14 @@ export async function optionalAuthenticate(
   if (!authHeader?.startsWith("Bearer ")) return;
   try {
     const payload = await request.jwtVerify<JWTPayload>();
-    request.user = {
+    request.authenticatedUser = {
       id:       payload.sub,
       email:    payload.email,
       role:     payload.role,
       schoolId: payload.schoolId,
     };
   } catch {
-    // Silently ignore invalid/expired tokens in optional mode
+    // Silently ignore invalid/expired tokens
   }
 }
 
@@ -67,7 +70,7 @@ export async function optionalAuthenticate(
 
 export function requireRole(...roles: UserRole[]) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    const user = request.user;
+    const user = request.authenticatedUser;
     if (!user) {
       return reply.code(401).send({
         success: false,
