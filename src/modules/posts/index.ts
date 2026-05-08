@@ -81,6 +81,37 @@ const ImageSectionSchema = z.object({
   height: z.number().optional(),
 });
 
+const ImageWithLinksSchema = z.object({
+  type: z.literal("imageWithLinks"),
+  imageUrl: z.string(),
+  altText: z.string(),
+  caption: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  url: z.string().url(),
+  openInNewTab: z.boolean().optional().default(false),
+  ariaLabel: z.string().optional(),
+});
+
+const LinkSchema = z.object({
+  text: z.string(),
+  url: z.string().url(),
+  variant: z.enum(["primary", "secondary", "outline"]).optional().default("primary"),
+  openInNewTab: z.boolean().optional().default(false),
+  icon: z.string().optional(),
+});
+
+const ImageWithMultipleLinksSchema = z.object({
+  type: z.literal("imageWithMultipleLinks"),
+  imageUrl: z.string(),
+  altText: z.string(),
+  caption: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  showLinkHint: z.boolean().optional().default(false),
+  links: z.array(LinkSchema).min(1),
+});
+
 const VideoSectionSchema = z.object({
   type: z.literal("video"),
   videoType: z.enum(["youtube", "native"]),
@@ -117,6 +148,16 @@ const DividerSectionSchema = z.object({
   type: z.literal("divider"),
 });
 
+const ListWithLinksSectionSchema = z.object({
+  type: z.literal("listWithLinks"),
+  items: z.array(z.string()),   // each item is pre-rendered sanitised HTML
+});
+
+const NumberedListWithLinksSectionSchema = z.object({
+  type: z.literal("numberedListWithLinks"),
+  items: z.array(z.string()),   // each item is pre-rendered sanitised HTML
+});
+
 const BlogContentSectionSchema = z.discriminatedUnion("type", [
   ParagraphSectionSchema,
   ParagraphWithLinksSectionSchema,
@@ -125,9 +166,13 @@ const BlogContentSectionSchema = z.discriminatedUnion("type", [
   QuoteSectionSchema,
   TipSectionSchema,
   ListSectionSchema,
+  ListWithLinksSectionSchema,
   NumberedListSectionSchema,
+  NumberedListWithLinksSectionSchema,
   TwoColumnListSectionSchema,
   ImageSectionSchema,
+  ImageWithLinksSchema,
+  ImageWithMultipleLinksSchema,
   VideoSectionSchema,
   TableSectionSchema,
   CodeSectionSchema,
