@@ -93,24 +93,7 @@ const ImageWithLinksSchema = z.object({
   ariaLabel: z.string().optional(),
 });
 
-const LinkSchema = z.object({
-  text: z.string(),
-  url: z.string().url(),
-  variant: z.enum(["primary", "secondary", "outline"]).optional().default("primary"),
-  openInNewTab: z.boolean().optional().default(false),
-  icon: z.string().optional(),
-});
 
-const ImageWithMultipleLinksSchema = z.object({
-  type: z.literal("imageWithMultipleLinks"),
-  imageUrl: z.string(),
-  altText: z.string(),
-  caption: z.string().optional(),
-  width: z.number().optional(),
-  height: z.number().optional(),
-  showLinkHint: z.boolean().optional().default(false),
-  links: z.array(LinkSchema).min(1),
-});
 
 const VideoSectionSchema = z.object({
   type: z.literal("video"),
@@ -172,7 +155,6 @@ const BlogContentSectionSchema = z.discriminatedUnion("type", [
   TwoColumnListSectionSchema,
   ImageSectionSchema,
   ImageWithLinksSchema,
-  ImageWithMultipleLinksSchema,
   VideoSectionSchema,
   TableSectionSchema,
   CodeSectionSchema,
