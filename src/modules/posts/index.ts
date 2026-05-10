@@ -141,6 +141,16 @@ const ImageWithListSectionSchema = z.object({
   imagePosition: z.enum(["left", "right"]).default("left"),
 });
 
+const ImageWithLinksSectionSchema = z.object({
+  type: z.literal("imageWithLinks"),
+  imageUrl:      z.string(),
+  altText:       z.string(),
+  captionHtml:   z.string(),
+  width:         z.number().optional(),
+  height:        z.number().optional(),
+  imagePosition: z.enum(["left", "right", "top", "bottom"]).default("bottom"),
+});
+
 const BlogContentSectionSchema = z.discriminatedUnion("type", [
   ParagraphSectionSchema,
   ParagraphWithLinksSectionSchema,
@@ -155,6 +165,7 @@ const BlogContentSectionSchema = z.discriminatedUnion("type", [
   TwoColumnListSectionSchema,
   ImageSectionSchema,
   ImageWithListSectionSchema,
+  ImageWithLinksSectionSchema,
   VideoSectionSchema,
   TableSectionSchema,
   CodeSectionSchema,
